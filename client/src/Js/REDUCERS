@@ -1,0 +1,351 @@
+// Define a reducer function that takes two arguments: state and action
+const reducer = (state, action) => {
+  if (action.type === "ADD_TO_CART") {
+    const name = action.name;
+    const price = action.price + 0.99;
+    const image = action.image;
+
+    const existingProduct = state.cart?.find(
+      (product) => product.name === action.name
+    );
+
+    if (existingProduct) {
+      // If the product already exists in the cart, update its count
+      const updatedCart = state.cart.map((product) =>
+        product.name === name
+          ? { ...product, count: product.count + 1 }
+          : product
+      );
+
+      let newTotalPrice = 0;
+
+      // Recalculate the total prices of all products after updating the count
+      //   newTotalPrice = updatedCart.reduce(
+      //     (accumulator, product) => accumulator + product.price * product.count,
+      //     0
+      //   );
+
+      updatedCart.map((singleGame) => {
+        newTotalPrice += singleGame.price * singleGame.count;
+      });
+
+      console.log(newTotalPrice);
+
+      // Update the cart data in localStorage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      console.log("Cart Updated");
+
+      // Return a new state object with the updated cart and total price
+      return {
+        ...state,
+        cart: updatedCart, // Update the cart with the modified data
+        totalPrice: newTotalPrice, // Update the total price in the state
+      };
+    } else {
+      // If the product doesn't exist in the cart, add it as a new item
+      const newItem = {
+        image: image,
+        name: name,
+        price: price,
+        count: 1,
+      };
+
+      // Calculate the new total price after adding the new item
+      totalPrices += newItem.price;
+
+      // Create a new cart array with the new item
+      const updatedCart = [...state.cart, newItem];
+
+      // Update the cart data in localStorage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+      // console.log("Cart Updated");
+
+      // Return a new state object with the updated cart and total price
+      return {
+        ...state,
+        cart: updatedCart, // Add the new item to the cart
+        totalPrice: totalPrices, // Update the total price in the state
+      };
+    }
+  }
+
+  // Dispatch to remove Single Item
+  if (action.type === "REMOVE") {
+    let totalPrices = 0;
+
+    // Function to filter non-payload id from cart state
+    const allWithoutSameID = state.cart?.filter(
+      (product) => product.name !== action.payload
+    );
+
+    // Calculate the total prices of all products after updating the count
+    allWithoutSameID.forEach((product) => {
+      totalPrices += product.price * product.count;
+    });
+
+    localStorage.setItem("cart", JSON.stringify(allWithoutSameID));
+
+    // Return a new state object with the updated cart and total price
+    return {
+      ...state,
+      cart: allWithoutSameID,
+      totalPrice: totalPrices,
+    };
+  }
+
+  // Check if the action type is "CLEAR" for clearing the cart
+  if (action.type === "CLEAR") {
+    localStorage.removeItem("cart");
+    return {
+      ...state,
+      cart: [],
+      totalPrice: 0,
+    };
+  }
+
+  // Check if the action type is "true" for toogling the sidebar
+  if (action.type === "TOOGLE_TRUE") {
+    return {
+      ...state,
+      toogle: true,
+    };
+  }
+
+  // Check if the action type is "false" for toogling the sidebar
+  if (action.type === "TOOGLE_FALSE") {
+    return {
+      ...state,
+      toogle: false,
+    };
+  }
+
+  // Calculating total price
+  if (action.type === "TOTALPRICE") {
+    let calculatedTotalPrice = 0;
+
+    state?.cart?.map((single) => {
+      calculatedTotalPrice += single?.count * single?.price;
+    });
+
+    calculatedTotalPrice = (
+      calculatedTotalPrice +
+      calculatedTotalPrice * 0.15
+    ).toFixed(2);
+
+    // console.log(calculatedTotalPrice);
+
+    return {
+      ...state,
+      totalPrice: calculatedTotalPrice,
+    };
+  }
+
+  // Check if the action type is "SET_GAME_DATA" for initializing the allGames (original) state variable
+  if (action.type === "SET_GAME_DATA") {
+    // Return a new state object with "allGames" set to the provided payload
+    return {
+      ...state,
+      allGames: action.payload,
+      filterdData: action.payload,
+    };
+  }
+
+  // Check if the action type is "SEARCH" for initializing the search input
+  if (action.type === "SEARCH") {
+    // Return a new state object with "searchedData" set to the provided payload
+    let searchedData = state.allGames?.filter((item) => {
+      // Filter games based on search term
+      let lowerSearch = action.payload.toLowerCase();
+      let lowerName = item.name.toLowerCase();
+      let include = lowerName.includes(lowerSearch);
+      return lowerSearch === "" ? item : include;
+    });
+
+    searchedData.length > 0
+      ? (state.noSearchData = true)
+      : (state.noSearchData = false);
+
+    console.log(state.noSearchData);
+
+    // console.log(searchedData);
+    return {
+      ...state,
+      filterdData: searchedData,
+    };
+  }
+
+  // Check if the action type is "increment" for incrementing single cart value by 1
+  if (action.type == "INCREMENT_CART") {
+    let totalPrices = 0;
+
+    // Update the count of the product with the provided name in the cart
+    const newFilterdData = state.cart?.map((product) =>
+      product.name === action.name
+        ? { ...product, count: product.count + 1 }
+        : product
+    );
+
+    // Calculate the total prices of all products after updating the count
+    newFilterdData.forEach((product) => {
+      totalPrices += product.price * product.count;
+    });
+
+    console.log(totalPrices);
+    console.log("Json Updated");
+
+    localStorage.setItem("cart", JSON.stringify(newFilterdData));
+
+    // Return a new state object with the updated cart and total price
+    return {
+      ...state,
+      cart: newFilterdData, // Update the cart with the filtered and modified data
+      totalPrice: totalPrices, // Update the total price in the state
+    };
+  }
+
+  // Check if the action type is "decrement" for decrementing single cart value by 1
+  if (action.type == "DECREMENT_CART") {
+    let totalPrices = 0;
+
+    // Update the count of the product with the provided name in the cart, if count > 1
+    const newFilterdData = state.cart?.map((product) =>
+      product.name === action.name && product.count > 1
+        ? { ...product, count: product.count - 1 }
+        : product
+    );
+
+    // Calculate the total prices of all products after updating the count
+    newFilterdData.forEach((product) => {
+      totalPrices += product.price * product.count;
+    });
+
+    console.log(totalPrices);
+    console.log("Json Updated");
+
+    localStorage.setItem("cart", JSON.stringify(newFilterdData));
+
+    // Return a new state object with the updated cart and total price
+    return {
+      ...state,
+      cart: newFilterdData, // Update the cart with the filtered and modified data
+      totalPrice: totalPrices, // Update the total price in the state
+    };
+  }
+
+  // Check if the action type is "FILTER" for filtering games with their geners
+  if (action.type === "FILTER") {
+    let dataAfterFiltered = [];
+    let name = "All";
+
+    if (
+      action.payload.filterType === "clear" ||
+      action.payload.filterType === "all"
+    ) {
+      return {
+        ...state,
+        filterdData: state.allGames,
+        gameTitle: name,
+      };
+    }
+
+    // Filter by Platform
+    if (action.payload.filterType === "platform") {
+      // console.log("platform activated")
+      dataAfterFiltered = state.allGames.filter((game) =>
+        game.platforms.some(
+          (platform) => platform.platform.name === action.payload.filterName
+        )
+      );
+      name = action.payload.filterName;
+    }
+
+    // Sort by name in both ascending or descending order
+    if (action.payload.filterType == "name") {
+      if (action.payload.filterName == "Ascending") {
+        dataAfterFiltered = action.payload.data.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
+      } else {
+        dataAfterFiltered = action.payload.data.sort((a, b) =>
+          b.name.localeCompare(a.name)
+        );
+      }
+      name = state.gameTitle;
+    }
+
+    // Sort by popularity in both ascending or descending order
+    if (action.payload.filterType == "popularity") {
+      if (action.payload.filterName == "Ascending") {
+        dataAfterFiltered = action.payload.data.sort(
+          (a, b) => a.metacritic - b.metacritic
+        );
+      } else {
+        dataAfterFiltered = action.payload.data.sort(
+          (a, b) => b.metacritic - a.metacritic
+        );
+      }
+      name = state.gameTitle;
+    }
+
+    // Sort by popularity in both ascending or descending order
+    if (action.payload.filterType == "rate") {
+      if (action.payload.filterName == "Ascending") {
+        dataAfterFiltered = action.payload.data.sort(
+          (a, b) => a.rating - b.rating
+        );
+      } else {
+        dataAfterFiltered = action.payload.data.sort(
+          (a, b) => b.rating - a.rating
+        );
+      }
+      name = state.gameTitle;
+    }
+
+    // Sort by release date in both ascending or descending order
+    if (action.payload.filterType == "date") {
+      dataAfterFiltered = action.payload.data?.sort((a, b) => {
+        const dateA = new Date(a.released.slice(0, 8)).getTime();
+        const dateB = new Date(b.released.slice(0, 8)).getTime();
+
+        if (action.payload.filterName === "Ascending") {
+          return dateA - dateB;
+        } else {
+          return dateB - dateA;
+        }
+      });
+      name = state.gameTitle;
+    }
+
+    // Filter the data to include only items with the specified genre
+    if (action.payload.filterType === "gener") {
+      console.log(action.payload.filterName);
+      name = action.payload.title;
+
+      if (name === "All") {
+        console.log("hello");
+        return {
+          ...state,
+          filterdData: state.allGames,
+          gameTitle: name,
+        };
+      }
+
+      dataAfterFiltered = action.payload.data.filter((item) => {
+        return item.genres.some(
+          (genre) => genre.slug === action.payload.filterName
+        );
+      });
+
+      // Sort the filtered data by some criteria, for example, playtime
+      dataAfterFiltered.sort((a, b) => b.playtime - a.playtime);
+    }
+
+    return {
+      ...state,
+      filterdData: dataAfterFiltered,
+      gameTitle: name,
+    };
+  }
+};
+
+export default reducer;

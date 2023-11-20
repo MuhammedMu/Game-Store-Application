@@ -1,0 +1,22 @@
+@import "react-loading-skeleton/dist/skeleton.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  /* font-family: 'Playfair Display', serif; */
+  font-family: "Poppins", sans-serif;
+}
+.addToCart {
+  /*
+-webkit-clip-path: polygon(49% 19%, 100% 46%, 100% 100%, 50% 100%, 0 100%, 0 45%);
+clip-path: polygon(49% 19%, 100% 46%, 100% 100%, 50% 100%, 0 100%, 0 45%);
+
+-webkit-clip-path: circle(51.8% at 50% 50%);
+clip-path: circle(51.8% at 50% 50%);
+*/
+}
