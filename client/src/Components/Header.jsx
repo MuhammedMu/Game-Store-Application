@@ -94,7 +94,6 @@ function Header() {
             <div className="flex px-5">
               <Link to={"/"}>
                 <div
-                  onClick={() => handleSignOut()}
                   className="flex pl-5 py-3 items-center text-white text-sm cursor-pointer gap-2 transform transition-transform duration-300 hover:scale-125"
                 >
                   <div>Home</div>

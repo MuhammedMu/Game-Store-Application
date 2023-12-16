@@ -7,6 +7,7 @@ import Sidebar from "./Sidebar";
 import { addDoc, collection } from "firebase/firestore";
 import db from "../Js/firebase";
 import axiosClient from "../Js/axiosClient";
+import axios from "axios";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -57,8 +58,8 @@ const CreditCardForm = () => {
   useEffect(() => {
     const getClientSecret = async () => {
       try {
-        const response = await axiosClient.post(
-          `/payment/create?total=${totalPrice * 100}`
+        const response = await axios.post(
+          `https://odd-tan-macaw-belt.cyclic.app//payment/create?total=${totalPrice * 100}`
         );
         setClientSecret(response.data.clientSecret);
       } catch (error) {
@@ -186,8 +187,11 @@ const CreditCardForm = () => {
 
   // Return JSX for rendering the component
   return (
-    <div className="pt-[50px] overflow-hidden w-screen h-screen bg-gradient-to-r from-slate-950 via-slate-800 to-red-950 ">
-      <div className="w-full md:w-[620px] h-[280px] mx-auto  ">
+    <div className="   pt-[50px] overflow-hidden w-screen h-screen bg-gradient-to-r from-slate-950 via-slate-800 to-red-950 ">
+     
+      <div className="w-full md:mx-10  h-full md:flex md:w[70%] md:mt-32">
+        
+      <div className="w-[80%]  md:w-[60%] h-[280px] mx-auto  ">
         {/* Credit card  */}
         <div className="flex w-full  my-10  p-5 shadow-lg shadow-black  bg-gradient-to-tl from-cyan-900 via-cyan-800 to-cyan-900  h-full rounded-xl justify-center items-center">
           {/* Card */}
@@ -257,7 +261,9 @@ const CreditCardForm = () => {
 
       {toogle && <Sidebar />}
 
-      <div className="container relative  w-[95%] mt-7  md:w-[80%]  lg:w-[55%] h-[42%] mx-auto overflow-y-auto scrollbar-thin scrollbar-thumb-rounded-md scrollbar-thumb-slate-400  scrollbar-track-slate-600 scrollbar-track-rounded-full md:pr-2">
+      <div className="w-full ">
+
+      <div className="container relative  w-[95%] mt-11 md:mt-7  md:w-[80%]  lg:w-[75%] h-[42%] mx-auto overflow-y-auto scrollbar-thin scrollbar-thumb-rounded-md scrollbar-thumb-slate-400  scrollbar-track-slate-600 scrollbar-track-rounded-full md:pr-2">
         <div className="pr-3  h-full   ">
           {cart?.length == 0 ? (
             <h1 className="text-slate-500 absolute lg:w-60  justify-center text-xl lg:text-3xl  top-1/2 right-[38%] lg:right-64 font-bold ">
@@ -365,6 +371,8 @@ const CreditCardForm = () => {
           {totalPrice}
         </div>
       </div>
+      </div>
+     </div>
     </div>
   );
 };
