@@ -6,7 +6,6 @@ import { useNavigate } from "react-router";
 import Sidebar from "./Sidebar";
 import { addDoc, collection } from "firebase/firestore";
 import db from "../Js/firebase";
-import axiosClient from "../Js/axiosClient";
 import axios from "axios";
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { ToastContainer, toast } from "react-toastify";
@@ -52,25 +51,12 @@ const CreditCardForm = () => {
   //   setTotalPrice();
   // }, [cart]);
 
-  // Effect to fetch the client secret for Stripe payment
-  console.log(totalPrice);
+  // Checkout is a demo only: no payment server is called and no card is charged.
+  const showDemoNotice = (e) => {
+    e.preventDefault();
+    toast.info("Checkout is disabled in this demo. No payment is taken.");
+  };
 
-  useEffect(() => {
-    const getClientSecret = async () => {
-      try {
-        const response = await axios.post(
-          `https://odd-tan-macaw-belt.cyclic.app//payment/create?total=${totalPrice * 100}`
-        );
-        setClientSecret(response.data.clientSecret);
-      } catch (error) {
-        console.error("Error fetching client secret:", error.message);
-      }
-    };
-
-    getClientSecret();
-  }, []);
-
-  console.log(clientSecret);
 
   // Handle form submission for payment
   // const handleSubmit = async (e) => {
@@ -196,11 +182,15 @@ const CreditCardForm = () => {
         <div className="flex w-full  my-10  p-5 shadow-lg shadow-black  bg-gradient-to-tl from-cyan-900 via-cyan-800 to-cyan-900  h-full rounded-xl justify-center items-center">
           {/* Card */}
           <div className="card  space-y-2   w-full   ">
+            <div className="mx-4 mb-3 rounded-lg border border-yellow-400 bg-yellow-400/10 px-4 py-3 text-sm text-yellow-200">
+              <strong>Demo only.</strong> This is a portfolio project, so
+              checkout is disabled and no payment is taken.
+            </div>
             <h1 className="text-white text-xl md:text-3xl pl-5 mb-2 font-bold">
               Payment Card Information
             </h1>
             {/* Form for card input */}
-            <form onSubmit={handleSubmit} className="w-full  h-fit">
+            <form onSubmit={showDemoNotice} className="w-full  h-fit">
               <div className="p-4  rounded-lg shadow-md">
                 <div className="bg-white rounded-lg p-4 border border-gray-300">
                   <div className="rounded-lg p-4 border border-gray-400">
@@ -240,8 +230,11 @@ const CreditCardForm = () => {
                     />
                   </button>
                 ) : (
-                  <button className="flex text-lg gap-3 h-full md:text-xs lg:text-[19px] lg:font-bold  items-center ">
-                    Pay now with
+                  <button
+                    disabled
+                    className="flex text-lg gap-3 h-full md:text-xs lg:text-[19px] lg:font-bold  items-center cursor-not-allowed opacity-60"
+                  >
+                    Checkout disabled (demo)
                     <img
                       src={stripeIcon}
                       className="w-12 object-cover"
